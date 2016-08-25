@@ -26,7 +26,7 @@ public class MainActivity extends Activity {
         chartview.setValues(90,119,151);
         chartview.setColors(Color.YELLOW,Color.GREEN,Color.BLACK);
 
-        chartview.setOnClickListener(new View.OnClickListener() {
+  /*      chartview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
@@ -38,7 +38,7 @@ public class MainActivity extends Activity {
                         alertDialog.dismiss();
                     }
                 });
-                alertDialog.show();
+                alertDialog.show();*/
 
                 Intent intent = new Intent(MainActivity.this,TwoActivity.class);
                 startActivity(intent);
