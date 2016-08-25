@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ChartView">
+        <attr name="radius" format="dimension" />
+        <attr name="pieModel">
+            <enum name="chart" value="0"/>
+            <enum name="arc" value="1"/>
+        </attr>
+        <attr name="showAnim" format="boolean" />
+    </declare-styleable>
+</resources>
