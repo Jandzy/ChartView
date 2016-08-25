@@ -26,10 +26,10 @@ public class MainActivity extends Activity {
         chartview.setValues(90,119,151);
         chartview.setColors(Color.YELLOW,Color.GREEN,Color.BLACK);
 
-  /*      chartview.setOnClickListener(new View.OnClickListener() {
+        chartview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
+               /* final AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create();
                 alertDialog.setTitle("haah");
                 alertDialog.setMessage("message");
                 alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "确定", new DialogInterface.OnClickListener() {
