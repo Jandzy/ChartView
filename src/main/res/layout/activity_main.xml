@@ -10,5 +10,5 @@
         android:layout_height="match_parent"
         chartview:showAnim="true"
         chartview:radius="100dp"
-        chartview:pieModel="chart"/>
+        chartview:pieModel="arc"/>
 </RelativeLayout>
