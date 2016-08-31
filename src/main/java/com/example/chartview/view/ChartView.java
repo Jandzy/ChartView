@@ -1,5 +1,7 @@
 package com.example.chartview.view;
 
+import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -53,16 +55,30 @@ public class ChartView extends View {
     private int[] mColors;
 
     /**
-     * animValues 动态存放当前绘制了值
+     * animValues 动态存放当前绘制了值（绘制动画时，mValues用来逐步绘制，animValues用来存放一共的值）
      */
     private float[] animValues;
     private int mAnimCount;
 
     private int count;//数组个数，几份
 
+    /**
+     * 点击的角度（12点方向是0度）
+     */
     private float touchAngle;
+    /**
+     * 存放每一块占用的角度的临界值
+     */
     private float[] angles;
+    /**
+     * 点击的是那一块
+     */
     private int select;
+
+    /**
+     * 每一块的中线位置（点击旋转动画用）,setValues初始化,点击旋转后改变中线的值
+     */
+    private float[] midlines;
 
     public ChartView(Context context) {
         this(context, null);
@@ -108,10 +124,10 @@ public class ChartView extends View {
             Log.e("slelct","========"+select);
 
             if(select == i){
-                voal.left = getWidth()/2-mRadius+20;
-                voal.top = getHeight()/2-mRadius-20;
-                voal.right = getWidth()/2+mRadius+20;
-                voal.bottom = getHeight()/2+mRadius-20;
+                voal.left = getWidth()/2-mRadius;
+                voal.top = getHeight()/2-mRadius+20;
+                voal.right = getWidth()/2+mRadius;
+                voal.bottom = getHeight()/2+mRadius+20;
             }else{
                 voal.left = getWidth() / 2 - mRadius;
                 voal.top = getHeight() / 2 - mRadius;
@@ -175,11 +191,14 @@ public class ChartView extends View {
         }
 
         angles = new float[values.length];
+        midlines = new float[values.length];
         for (int i = 0; i < values.length; i++) {
             if (i == 0) {
                 angles[i] = mValues[i];
+                midlines[i] = mValues[i]/2;
             } else {
                 angles[i] = mValues[i]+angles[i-1];
+                midlines[i] = mValues[i]/2+angles[i-1];
             }
         }
 
@@ -216,24 +235,61 @@ public class ChartView extends View {
                 }
 
                 select = -1;
-                invalidate();
                 for (int i = 0; i < angles.length; i++) {
                     if (i == 0) {
                         if (0 < touchAngle && touchAngle < angles[i]) {
                             select = i;
-                            invalidate();
                         }
                     }
                     if (i > 0) {
                         if (touchAngle > angles[i - 1] && touchAngle < angles[i]) {
                             select = i;
-                            invalidate();
                         }
                     }
+                }
+                if(select != -1){
+                    //动画
+                    float start,end;
+                    start = 0;
+                    end = 180-midlines[select];
+                    startAnimot(start,end);
                 }
 
                 break;
         }
         return super.onTouchEvent(event);
+    }
+
+    /**
+     * desc view旋转后，原来的坐标系不变
+     * @param start
+     * @param end
+     */
+    private void startAnimot(float start,float end){
+        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(this,"rotation",start,end);
+        objectAnimator.setDuration(1000);
+        objectAnimator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+
+                invalidate();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
+        objectAnimator.start();
     }
 }
