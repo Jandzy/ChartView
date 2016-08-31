@@ -6,9 +6,10 @@
 
     <com.example.chartview.view.ChartView
         android:id="@+id/chartview"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ff0000"
         chartview:showAnim="true"
-        chartview:radius="50dp"
+        chartview:radius="100dp"
         chartview:pieModel="arc"/>
 </RelativeLayout>

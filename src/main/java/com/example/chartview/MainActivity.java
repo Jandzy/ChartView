@@ -22,7 +22,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         chartview = (ChartView) findViewById(R.id.chartview);
 
-        chartview.setValues(90, 119, 151);
+        chartview.setValues(124.52f ,129.11f, 257.17f);
         chartview.setColors(Color.YELLOW, Color.GREEN,Color.DKGRAY);
 
     }

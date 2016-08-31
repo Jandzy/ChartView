@@ -118,8 +118,9 @@ public class ChartView extends View{
          * 赋值完需要return,否则循环赋值.
          */
         if(count <mAnimCount){
-            if(mValues[count]+1>animValues[count]){
+            if(mValues[count]+10>animValues[count]){
                 mValues[count] = animValues[count];
+                invalidate();
                 if(count==mAnimCount-1){//结束
                     return;
                 }else{
@@ -127,9 +128,10 @@ public class ChartView extends View{
                 }
             }
             if(mValues[count]<animValues[count]){
-                mValues[count]++;
+                mValues[count] += 10;
                 invalidate();
             }
+
         }
 
     }
@@ -145,8 +147,14 @@ public class ChartView extends View{
             sum += value;
         }
         mAnimCount = values.length;
+        float angleSum = 0;
         for(int i=0; i<values.length; i++){
-            mValues[i] =(float)(values[i]/sum)*360;
+            if(i==values.length-1){
+                mValues[i] = 360 - angleSum;
+            }else{
+                mValues[i] =(float)(values[i]/sum)*360;
+                angleSum += mValues[i];
+            }
         }
         if(mShowAnim){
             count = 0;
