@@ -112,6 +112,26 @@ public class ChartView extends View{
             canvas.drawCircle(getWidth()/2,getHeight()/2,mRadius/2,mPaint);
         }
 
+        /**
+         * 为了动画效果，需要先确定mValues的length，然后逐个赋值，先给mValues[0]赋值，如果mValues[0] 等于对应的百分比之后
+         * 再给mValues[1]赋值，以此类推。
+         * 赋值完需要return,否则循环赋值.
+         */
+        if(count <mAnimCount){
+            if(mValues[count]+1>animValues[count]){
+                mValues[count] = animValues[count];
+                if(count==mAnimCount-1){//结束
+                    return;
+                }else{
+                    count++;
+                }
+            }
+            if(mValues[count]<animValues[count]){
+                mValues[count]++;
+                invalidate();
+            }
+        }
+
     }
 
     public void setColors(int... colors){
@@ -132,44 +152,9 @@ public class ChartView extends View{
             count = 0;
             animValues = mValues;
             mValues = new float[mValues.length];
-            mHandler.removeCallbacks(runnable);
-            mHandler.post(runnable);
         }
 
     }
 
-    private Handler mHandler = new Handler();
-
-    /**
-     * 为了动画效果，需要先确定mValues的length，然后逐个赋值，先给mValues[0]赋值，如果mValues[0] 等于对应的百分比之后
-     * 再给mValues[1]赋值，以此类推。
-     * 赋值完需要return,否则循环赋值.
-     */
-    private Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            if(count <mAnimCount){
-                if(mValues[count]+1>animValues[count]){
-                    mValues[count] = animValues[count];
-                    if(count==mAnimCount-1){//结束
-                        return;
-                    }else{
-                        count++;
-                    }
-                }
-                if(mValues[count]<animValues[count]){
-                    mValues[count]++;
-                    postInvalidate();
-                    mHandler.postDelayed(this,1);
-                }
-            }else{
-                try {
-                    this.finalize();
-                } catch (Throwable throwable) {
-                    throwable.printStackTrace();
-                }
-            }
-        }
-    };
 
 }

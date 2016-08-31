@@ -22,8 +22,8 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         chartview = (ChartView) findViewById(R.id.chartview);
 
-        chartview.setValues(90, 119, 151,120);
-        chartview.setColors(Color.YELLOW, Color.GREEN);
+        chartview.setValues(90, 119, 151);
+        chartview.setColors(Color.YELLOW, Color.GREEN,Color.DKGRAY);
 
     }
 
