@@ -18,7 +18,7 @@ import com.example.chartview.R;
 /**
  * desc 饼状图
  */
-public class ChartView extends View {
+public class ChartView extends View implements Animator.AnimatorListener {
 
     //弧形
     public final static int ARC = 1;
@@ -79,6 +79,22 @@ public class ChartView extends View {
      * 每一块的中线位置（点击旋转动画用）,setValues初始化,点击旋转后改变中线的值
      */
     private float[] midlines;
+    /**
+     * 动画开始、结束位置
+     */
+    private float start;
+    private float end;
+
+    /**
+     * 象限位置
+     */
+    private int quadrant;
+
+    /**
+     * 切出去的距离
+     */
+    private int outRadious = 15;
+    private int moingSelect;
 
     public ChartView(Context context) {
         this(context, null);
@@ -101,6 +117,8 @@ public class ChartView extends View {
         mPaint.setAntiAlias(true);//画笔消除锯齿
 
         select = -1;
+        start = 0;
+        quadrant = 0;
 
 
     }
@@ -121,14 +139,51 @@ public class ChartView extends View {
         for (int i = 0; i < mValues.length; i++) {
             mPaint.setColor(mColors[i % mColors.length]);
 
-            Log.e("slelct","========"+select);
+            if (moingSelect == i) {
+                float outX = 0;
+                float outY = 0;
+                switch (quadrant) {
+                    case 1:
+                        outX = (float) Math.sin(Math.PI * midlines[i] / 180) * outRadious;
+                        outY = (float) Math.cos(Math.PI * midlines[i] / 180) * outRadious;
 
-            if(select == i){
-                voal.left = getWidth()/2-mRadius;
-                voal.top = getHeight()/2-mRadius+20;
-                voal.right = getWidth()/2+mRadius;
-                voal.bottom = getHeight()/2+mRadius+20;
-            }else{
+                        voal.left = getWidth() / 2 - mRadius + outX;
+                        voal.top = getHeight() / 2 - mRadius - outY;
+                        voal.right = getWidth() / 2 + mRadius + outX;
+                        voal.bottom = getHeight() / 2 + mRadius - outY;
+
+                        break;
+                    case 2:
+                        outX = (float) Math.cos(Math.PI * (midlines[i] - 90 )/ 180) * outRadious;
+                        outY = (float) Math.sin(Math.PI * (midlines[i] - 90) / 180) * outRadious;
+
+                        voal.left = getWidth() / 2 - mRadius + outX;
+                        voal.top = getHeight() / 2 - mRadius + outY;
+                        voal.right = getWidth() / 2 + mRadius + outX;
+                        voal.bottom = getHeight() / 2 + mRadius + outY;
+
+                        break;
+                    case 3:
+                        outX = (float) Math.sin(Math.PI * (midlines[i] - 180 ) / 180) * outRadious;
+                        outY = (float) Math.cos(Math.PI * (midlines[i] - 180 )/ 180) * outRadious;
+
+                        voal.left = getWidth() / 2 - mRadius - outX;
+                        voal.top = getHeight() / 2 - mRadius + outY;
+                        voal.right = getWidth() / 2 + mRadius - outX;
+                        voal.bottom = getHeight() / 2 + mRadius + outY;
+
+                        break;
+                    case 4:
+                        outX = (float) Math.cos(Math.PI * (midlines[i] - 270 )/ 180) * outRadious;
+                        outY = (float) Math.sin(Math.PI * (midlines[i] - 270 ) / 180) * outRadious;
+
+                        voal.left = getWidth() / 2 - mRadius - outX;
+                        voal.top = getHeight() / 2 - mRadius - outY;
+                        voal.right = getWidth() / 2 + mRadius - outX;
+                        voal.bottom = getHeight() / 2 + mRadius - outY;
+                        break;
+                }
+            } else {
                 voal.left = getWidth() / 2 - mRadius;
                 voal.top = getHeight() / 2 - mRadius;
                 voal.right = getWidth() / 2 + mRadius;
@@ -152,12 +207,12 @@ public class ChartView extends View {
          * 再给mValues[1]赋值，以此类推。
          * 赋值完需要return,否则循环赋值.
          */
-        if (count <= mAnimCount-1) {
+        if (count <= mAnimCount - 1) {
             if (mValues[count] + 10 > animValues[count]) {
                 mValues[count] = animValues[count];
                 invalidate();
                 count++;
-            }else{
+            } else {
                 if (mValues[count] < animValues[count]) {
                     mValues[count] += 10;
                     invalidate();
@@ -195,10 +250,10 @@ public class ChartView extends View {
         for (int i = 0; i < values.length; i++) {
             if (i == 0) {
                 angles[i] = mValues[i];
-                midlines[i] = mValues[i]/2;
+                midlines[i] = mValues[i] / 2;
             } else {
-                angles[i] = mValues[i]+angles[i-1];
-                midlines[i] = mValues[i]/2+angles[i-1];
+                angles[i] = mValues[i] + angles[i - 1];
+                midlines[i] = mValues[i] / 2 + angles[i - 1];
             }
         }
 
@@ -214,27 +269,34 @@ public class ChartView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+
+                select = -1;
+
                 float x = event.getX();
                 float y = event.getY();
                 touchAngle = 0;
                 //第一象限
                 if (x > getWidth() / 2 && x <= getWidth() / 2 + mRadius && y < getHeight() / 2 && y >= getHeight() / 2 - mRadius) {
-                    touchAngle = (float) (Math.atan((x - getWidth() / 2) / (getHeight()/2-y))/Math.PI * 180);
+                    touchAngle = (float) (Math.atan((x - getWidth() / 2) / (getHeight() / 2 - y)) / Math.PI * 180);
+                    quadrant = 1;
                 }
                 //第二象限
                 if (x > getWidth() / 2 && x <= getWidth() / 2 + mRadius && y > getHeight() / 2 && y <= getHeight() / 2 + mRadius) {
-                    touchAngle = 90 + (float) (Math.atan((y - getHeight() / 2) / (x - getWidth() / 2) )/Math.PI * 180);
+                    touchAngle = 90 + (float) (Math.atan((y - getHeight() / 2) / (x - getWidth() / 2)) / Math.PI * 180);
+                    quadrant = 2;
                 }
                 //第三象限
                 if (x < getWidth() / 2 && x >= getWidth() / 2 - mRadius && y > getHeight() / 2 && y <= getHeight() / 2 + mRadius) {
-                    touchAngle = 180 + (float) (Math.atan((getWidth() / 2-x) / (y - getHeight() / 2))/Math.PI * 180);
+                    touchAngle = 180 + (float) (Math.atan((getWidth() / 2 - x) / (y - getHeight() / 2)) / Math.PI * 180);
+                    quadrant = 3;
                 }
                 //第四象限
                 if (x < getWidth() / 2 && x >= getWidth() / 2 - mRadius && y < getHeight() / 2 && y >= getHeight() / 2 - mRadius) {
-                    touchAngle = 270 + (float) (Math.atan((getHeight() / 2-y) / (getWidth() / 2-x))/Math.PI * 180);
+                    touchAngle = 270 + (float) (Math.atan((getHeight() / 2 - y) / (getWidth() / 2 - x)) / Math.PI * 180);
+                    quadrant = 4;
                 }
 
-                select = -1;
+
                 for (int i = 0; i < angles.length; i++) {
                     if (i == 0) {
                         if (0 < touchAngle && touchAngle < angles[i]) {
@@ -247,12 +309,10 @@ public class ChartView extends View {
                         }
                     }
                 }
-                if(select != -1){
+                if (select != -1) {
                     //动画
-                    float start,end;
-                    start = 0;
-                    end = 180-midlines[select];
-                    startAnimot(start,end);
+                    end = 180 - midlines[select];
+                    startAnimot(start, end);
                 }
 
                 break;
@@ -262,34 +322,42 @@ public class ChartView extends View {
 
     /**
      * desc view旋转后，原来的坐标系不变
+     *
      * @param start
      * @param end
      */
-    private void startAnimot(float start,float end){
-        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(this,"rotation",start,end);
+    private void startAnimot(float start, float end) {
+        ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(this, "rotation", start, end);
         objectAnimator.setDuration(1000);
-        objectAnimator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-
-                invalidate();
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
+        objectAnimator.addListener(this);
         objectAnimator.start();
+    }
+
+    @Override
+    public void onAnimationStart(Animator animation) {
+        moingSelect = -1;
+        invalidate();
+    }
+
+    /**
+     * 旋转是整个view旋转，旋转过后，点击时的象限位置不变，中线位置不变，起始位置变啦
+     *
+     * @param animation
+     */
+    @Override
+    public void onAnimationEnd(Animator animation) {
+        moingSelect = select;
+        start = 180 - midlines[select];
+        invalidate();
+    }
+
+    @Override
+    public void onAnimationCancel(Animator animation) {
+
+    }
+
+    @Override
+    public void onAnimationRepeat(Animator animation) {
+
     }
 }
