@@ -353,7 +353,9 @@ public class ChartView extends View implements Animator.AnimatorListener {
 
     @Override
     public void onAnimationCancel(Animator animation) {
-
+        moingSelect = -1;
+        start = 180 - midlines[select];
+        invalidate();
     }
 
     @Override
