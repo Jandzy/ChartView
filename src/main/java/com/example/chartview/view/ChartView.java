@@ -207,19 +207,19 @@ public class ChartView extends View implements Animator.AnimatorListener {
          * 再给mValues[1]赋值，以此类推。
          * 赋值完需要return,否则循环赋值.
          */
-        if (count <= mAnimCount - 1) {
-            if (mValues[count] + 10 > animValues[count]) {
-                mValues[count] = animValues[count];
-                invalidate();
-                count++;
-            } else {
-                if (mValues[count] < animValues[count]) {
-                    mValues[count] += 10;
+        if(mShowAnim) {
+            if (count <= mAnimCount - 1) {
+                if (mValues[count] + 10 > animValues[count]) {
+                    mValues[count] = animValues[count];
                     invalidate();
+                    count++;
+                } else {
+                    if (mValues[count] < animValues[count]) {
+                        mValues[count] += 10;
+                        invalidate();
+                    }
                 }
             }
-
-
         }
 
     }
