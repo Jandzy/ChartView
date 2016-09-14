@@ -135,6 +135,25 @@ public class ChartView extends View implements Animator.AnimatorListener {
         //startPostition要在ondrew方法里面处事值，如果在构造方法中的话，activity在onrestart方法之后view会重绘调用ondraw方法。
         startPosition = 270;
 
+        /**
+         * 为了动画效果，需要先确定mValues的length，然后逐个赋值，先给mValues[0]赋值，如果mValues[0] 等于对应的百分比之后
+         * 再给mValues[1]赋值，以此类推。
+         * 赋值完需要return,否则循环赋值.
+         */
+        if(mShowAnim) {
+            if (count <= mAnimCount - 1) {
+                if (mValues[count] + 10 > animValues[count]) {
+                    mValues[count] = animValues[count];
+                    count++;
+                    invalidate();
+                } else {
+                    if (mValues[count] < animValues[count]) {
+                        mValues[count] += 10;
+                        invalidate();
+                    }
+                }
+            }
+        }
 
         for (int i = 0; i < mValues.length; i++) {
             mPaint.setColor(mColors[i % mColors.length]);
@@ -202,25 +221,7 @@ public class ChartView extends View implements Animator.AnimatorListener {
             canvas.drawCircle(getWidth() / 2, getHeight() / 2, mRadius / 2, mPaint);
         }
 
-        /**
-         * 为了动画效果，需要先确定mValues的length，然后逐个赋值，先给mValues[0]赋值，如果mValues[0] 等于对应的百分比之后
-         * 再给mValues[1]赋值，以此类推。
-         * 赋值完需要return,否则循环赋值.
-         */
-        if(mShowAnim) {
-            if (count <= mAnimCount - 1) {
-                if (mValues[count] + 10 > animValues[count]) {
-                    mValues[count] = animValues[count];
-                    invalidate();
-                    count++;
-                } else {
-                    if (mValues[count] < animValues[count]) {
-                        mValues[count] += 10;
-                        invalidate();
-                    }
-                }
-            }
-        }
+
 
     }
 

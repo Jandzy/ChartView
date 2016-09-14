@@ -3,4 +3,7 @@
 
 ##效果
 
-![](http://img5.imgtn.bdimg.com/it/u=3574049832,481066373&fm=21&gp=0.jpg)
+![效果图](chartview.png)
+
+gif动画一直截不好，可以下demo看看，基本和支付宝一样。
+[详见博客地址](http://jandzy.com/2016/09/13/%E4%BB%BF%E6%94%AF%E4%BB%98%E5%AE%9Dchartview/)
